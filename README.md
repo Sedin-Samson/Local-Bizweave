@@ -123,7 +123,20 @@ In the root directory, start the databases first:
 docker compose up -d postgresql mysql clickhouse mssql redis
 ```
 
-#### 2. Run Bizweave Backend Locally
+#### 2. Run Bizweave Backend
+
+**Option 1: As a Docker Container (Recommended)**
+1. Navigate to `bizweave_backend`:
+   ```bash
+   cd bizweave_backend
+   ```
+2. Build and start the backend container:
+   ```bash
+   docker compose up -d --build
+   ```
+   *(For detailed backend docker options, see [bizweave_backend/README.md](file:///Users/samson/Documents/Datakulture/bizweave/bizweave_backend/README.md)).*
+
+**Option 2: Running Locally (Development Mode)**
 1. Navigate to `bizweave_backend`:
    ```bash
    cd bizweave_backend
