@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    environment:
+      - TZ=Asia/Kolkata
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker-data/portainer:/data
+    ports:
+      - 9443:9443
+    restart: unless-stopped
+
+  postgresql:
+    image: postgres:15.6-bookworm
+    container_name: postgresql
+    environment:
+      - TZ=Asia/Kolkata
+      - POSTGRES_PASSWORD=datakulturedk123
+    volumes:
+      - ./docker-data/postgresql:/var/lib/postgresql/data
+    shm_size: 1g
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    networks:
+      - zapstro-network
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=datakultureDK123
+      - MYSQL_DATABASE=airflow
+      - MYSQL_USER=airflow
+      - MYSQL_PASSWORD=cat
+    volumes:
+      - ./docker-data/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    container_name: clickhouse
+    environment:
+      - TZ=Asia/Kolkata
+      - CLICKHOUSE_DB=default
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=cat
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    volumes:
+      - ./docker-data/clickhouse/data:/var/lib/clickhouse/
+      - ./docker-data/clickhouse/user_files:/var/lib/clickhouse/user_files
+      - ./docker-data/clickhouse/logs:/var/log/clickhouse-server/
+    ports:
+      - 9000:9000
+      - 8123:8123
+    extra_hosts:
+      - "bizweave-demo.datakulture.com:172.17.0.1"
+    networks:
+      - zapstro-network
+    restart: unless-stopped
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    user: root # Bypasses directory permission issues on local machine volumes
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=datakultureDK123
+    volumes:
+      - ./docker-data/mssql:/var/opt/mssql
+    ports:
+      - 1433:1433
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    container_name: redis
+    environment:
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./docker-data/redis:/data
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+    networks:
+      - zapstro-network
+
+networks:
+  zapstro-network:
+    external: true
